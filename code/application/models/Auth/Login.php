@@ -10,7 +10,9 @@
  * ログインクラス
  */
 
-class Login
+require_once dirname(__FILE__) . '/../Auth/Auth.php';
+
+class Models_Auth_Login
 {
     private function __construct()
     {
@@ -34,10 +36,11 @@ class Login
         // バリデーションはのちほど
         
         // 認証クラス
-        $result = Model_Auth::factory()->auth($userId, $userPass);
+        $result = Models_Auth_Auth::factory()->check($userId, $userPass);
         
-        $result['status'] = true;
-        
+        //if ($result['status'] == true) {
+        //var_dump($result['status']);
+        //}
         return $result;
     }
     

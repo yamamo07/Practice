@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/../Register/PreRegister.php';
+
 class PreRegisterController extends Zend_Controller_Action
 {
 
@@ -20,7 +22,7 @@ class PreRegisterController extends Zend_Controller_Action
             print 'なにこれ';
             
             // 仮登録処理クラス
-            $result = Model_PreRegister::factory()->registerUser($newUserAddress);
+            $result = Models_Register_PreRegister::factory()->registerUser($newUserAddress);
             
             if ($result['msg']) {
                 // メール飛ばしたか、飛ばせなかったかみたいなメッセージアサイン

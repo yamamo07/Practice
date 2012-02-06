@@ -10,7 +10,7 @@
  * 仮登録クラス
  */
 
-class Login
+class Models_Register_PreRegister
 {
     private function __construct()
     {
@@ -24,7 +24,6 @@ class Login
     
     public function registerUser($newUserAddress)
     {
-        
         if (!$newUserAddress) {
             $result['status'] = false;
             $result['err_msg'] = '記入漏れあるよ';
@@ -38,7 +37,7 @@ class Login
         $preRegisterCode = MD5($timeStamp);
         
         // DB書き込みクラス
-        $dbResult = Model_PreRegisterInfoDao::factory()->insert($newUserAddress, $preRegisterCode);
+        $dbResult = Models_Register_PreRegisterInfoDao::factory()->insert($newUserAddress, $preRegisterCode);
         
         // メール送信クラス
         if ($dbResult) {
@@ -51,6 +50,7 @@ class Login
         } else {
             // メール送信できなかった
             $result['status'] = false;
+            // DBのデータ削除すべき
         }
         
         return $result;

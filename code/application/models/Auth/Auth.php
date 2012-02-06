@@ -10,16 +10,16 @@
  * 認証クラス
  */
 
-require_once ('../../../application/models/Login.php');
+//require_once ('../../../application/models/Login.php');
 
-class Auth
+class Models_Auth_Auth
 {
     
     private $config;
     
     private function __construct()
     {
-        $config = new Zend_Config_Ini('../application/configs/application.ini', APPLICATION_ENV);
+        $this->config = new Zend_Config_Ini('../application/configs/application.ini', APPLICATION_ENV);
     }
     
     static public function factory()
@@ -29,30 +29,31 @@ class Auth
     
     public function check($userId, $userPass)
     {
-        $dbAdapter = Zend_Db::factory($config->db->adapter, $params);
+        $params = array(
+            'host' => $this->config->db->params->host,
+            'username' => $this->config->db->params->username,
+            'password' => $this->config->db->params->password,
+            'dbname' => $this->config->db->params->dbname
+        );
+        $dbAdapter = Zend_Db::factory($this->config->db->adapter, $params);
         
         $authAdapter =  new Zend_Auth_Adapter_DbTable($dbAdapter);
-        $authAdapter->setTableName($this->memberTableName)
-            ->setIdentityColumn($config->authfront->identityColumn)
-            ->setCredentialColumn($config->authfront->credentialColumn)
+        $authAdapter->setTableName($this->config->auth->tableName)
+            ->setIdentityColumn($this->config->auth->identityColumn)
+            ->setCredentialColumn($this->config->auth->credentialColumn)
             ->setCredentialTreatment('MD5(?)');
-
         $authAdapter->setIdentity($userId);
         $authAdapter->setCredential($userPass);
 
-        $result = $this->_auth->authenticate($authAdapter);
-        if ($result->isValid())
-        {
+        $auth = Zend_Auth::getInstance();
+        $authResult = $auth->authenticate($authAdapter);
+        if ($authResult->isValid()) {
             // 認証成功(ログインできる。)
             $result['status'] = true;
-        }
-        else
-        {
+        } else {
             // 認証失敗(ログインできない。)
             $result['status'] = false;
         }
-        
-        //$result['status'] = true;
         
         return $result;
     }
